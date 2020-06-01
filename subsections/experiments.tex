@@ -1,0 +1,77 @@
+
+
+\let\clearpage\relax
+\input{tables/table_5}
+
+\let\clearpage\relax
+\input{tables/table_4}
+%Now, we present quantitative and qualitative evaluation of our proposed method. We break this section into two major parts: Evaluation of the propagation method, Evaluation of learning with propagated labels. Our experiments are performend on two widely adopted semantic segmentation datasets, Cityscapes and Apolloscape.
+
+\subsection{Implementation Details}
+For training the label refinement network $\mathtt{LRN}_\theta$, we utilize the dual-task loss~\cite{gated_iccv2019}.
+For training semantic segmentation networks on manually annotated and generated labels we follow the training regime outlined by~\cite{nvidia_cvpr19} as our baseline. However, we do not use Relaxed Label Loss~\cite{nvidia_cvpr19} (cf. Section~\ref{subsec-lp_train}), and train all models for $220$ epochs. The network architecture is based on DeepLabV3+~\cite{deep_v3} with a ResNeXt~\cite{resnext} backbone for ablations, and WideResNet38~\cite{wider_res38} for the test set submissions.
+The architecture and other training details are explained in the supplementary.
+
+\textbf{Dataset Details}: The ApolloScape dataset~\cite{as_dataset} contains 143,906 annotated images. To make our study feasible, we first create train and validation subsets of sizes 40,100 and 6,113 respectively. We further divide the train-subset into $D_I$ and $D_{Iseq}$ containing 2,005 and 40,100 images respectively by creating continuous partitions of 21 frames each (more details are outlined in the supplementary). As ApolloScape has annotation for all frames, we have the ground truth label set $D_{Lseq}$ containing the clean annotations. We evaluate models trained with clean and propagated labels on the untouched validation subset. The Cityscapes dataset~\cite{cs_dataset} consists of 5,000 annotated images, split as the train ($D_{I}$), validation and test set with 2,975, 500, and 1,525 images, respectively. Further, a subset with sequential images containing no annotation $D_{Iseq}$, and a subset $D_{Ips}$ containing coarse annotation is also provided. Note that we \textit{do not} use the coarse labels and instead utilize pseudo-labelling for $D_{\hat{L}ps}$. % Models trained with clean and generated labels are evaluated on the val and test partitions. 
+
+
+\subsection{Evaluating Label Propagation}
+\label{subsec-lp_eval}
+We quantitatively establish that our method is able to propagate labels with significantly lesser noise than existing methods. 
+%Using the clean annotation $D_{Lseq}$ in Apolloscape we evaluate different the propagation methods. 
+In the ApolloScape dataset, from the manually annotated labels in $D_L$, we generate the approximated labels $D_{\hat{L}seq}$ for each propagation technique, and evaluate it against the given annotated labels $D_{Lseq}$.
+
+Figure~\ref{} show the mean Intersection over Union (mIoU) of different propagation methods at each propagation length. 
+% This is evaluated on the sequences adjacent to the training set itself, as label propagation is also conducted on those sequences only. 
+We compare against the previous state-of-the-art~\cite{nvidia_cvpr19}, as well as predictions from a segmentation model $\mathtt{S}_\theta$ trained on $D_L$ only. Our label propagation method surpasses the other methods, and as shown, \cite{nvidia_cvpr19} quickly start performing even worse than $\mathtt{S}_\theta$. 
+% We also present some qualitative results in Figure~\ref{} comparing nvidia etal with warp-refine propagation on Cityscapes.
+
+
+\subsection{Learning with Generated Labels}
+\label{subsec-lp_train}
+
+ We evaluate the improvement in semantic segmentation by training a model on the generated labels. We report the mean value of each metric over three different runs.%  Hence, our baseline model is  only labels $D_L$.
+%(i.e., for Cityscapes we do not use Coarse Labels, or pretraining on mapillary). 
+
+First, we present results countering the claims of the previous work~\cite{nvidia_cvpr19}. Specifically, we find~\cite{nvidia_cvpr19} to be ineffective in improving semantic segmentation. The baseline reported in ~\cite{nvidia_cvpr19} is trained for one-third the iterations with a suboptimal learning rate. By equalizing the number of training iterations, and increasing learning rate, we find that the baseline is able to match the proposed models from~\cite{nvidia_cvpr19}.~\footnote{We use the code provided by the authors at \url{https://github.com/NVIDIA/semantic-segmentation}. A similar trend is observed even when using coarse labels, and Mapillary Vistas pretraining and is reported in the supplementary.}
+
+
+\let\clearpage\relax
+\input{tables/table_2}
+\let\clearpage\relax
+\input{tables/table_1}
+% \let\clearpage\relax
+% \input{tables/table_6}
+% Can also have just one table
+
+
+To benefit from propagated data, we find it essential to include propagated samples from multiple timesteps. Following~\cite{lp_eccv}, for each label in $D_L$, we include propagated labels at timesteps $t \pm p$ where $p \in \{2,4,6,8\}$ from $D_{\hat{L}seq}$. Furthermore, we include pseudo-labelling on the \texttt{train\_extra} subset $D_{\hat{L}ps}$ as well. The results are shown in Table~\ref{tab_main_ablation}. The propagated labels, when used with the \emph{Uncertainty-Aware Training} (UAT), enable us to boost the performance $0.49$ mIoU. The performance is further boosted by $0.47$ mIOU when $D_{\hat{L}ps}$ is used as well. Note how UAT plays a crucial role in increasing performance in the presence of propagated labels.
+%   While simply adding the generated labels is found to be useful, the improvement is constraint by the noise in these labels. Once we introduce the uncertainty based learning (section~\ref{subsec-alea}), we are able to boost the result further. 
+
+Finally, using the same method, we show that it is able to improve the \textit{state-of-the-art} on Cityscapes (when training with fine labels only). Table~\ref{} shows the improvement by training with our method. We observe that in the presence of coarse labels, and Mapillary Vistas pretraining~\cite{mapillary}, the benefits of label propagation are not clear (shown in supplementary). This is expected as label propagation cannot be performed for the coarse labels and the Mapillary Vistas dataset and hence, in the presence of those labels, propagation is performed for only $\sim$ 10\% of the entire dataset.
+
+% \textbf{Stronger Metric}: Following~\cite{gated_iccv2019}, we also evaluate the distance-based mIoU, which measures performance on objects far away from the camera, which is much harder. The results are shown in Table~\ref{}, showing that the generated labels significantly help with objects further away.
+% As the performance in Cityscapes dataset is found to be saturating, we find mIOU to be a insufficient metric to show improvements in performance. 
+%Table~\ref{} compares our results with previous methods and show that the 0.6 \% improvement in mIOU translates to significant improvement in segmentation of objects far from the camera. 
+
+
+\textbf{Evaluation on ApolloScape}: In Table~\ref{} we show the benefit of training with propagated labels and the uncertainty-aware training regime on Apolloscape dataset. %We find a improvment of x\% mIOU over the baseline using our labels and uncertainty based training.
+
+\textbf{Modelling Label Noise with Uncertainty}: We demonstrate that the uncertainty estimates are able to model the noise in the data-generation process. Figure~\ref{} shows the precision-recall curves between the generated label $D_{\hat{L}seq}$ and manually annotated labels $D_{Lseq}$ on ApolloScape. % They show that the uncertainty is higher for noisy propagated labels. % label quality improves by removing labels with uncertainty larger than various percentile thresholds.
+
+
+
+% What are the experiements: 
+% 1) Apolloscapes  ppa/miou graph + examples on right. => By 25th
+% 2) Previous dont work + uncertainty plot. 
+% 2) Ablation ours Big table
+% 3) Big table test on Cityscapes. Fine Only with All. =. End moment
+% 4) L:Apolloscapes table mIOU. R: Finer metrics on Cityscapes.  = L: 27th, R: 23rd
+
+% Supplementary: 
+% 1) Failure all put in nvidia
+% 2) All put in ours (val and test?)
+% 3) propagation ablations.
+% 4) Proof
+% 5) Video
+% 6) More image examples. 

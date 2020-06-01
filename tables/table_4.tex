@@ -1,0 +1,15 @@
+\begin{table}[t]
+    \centering
+    \caption{ We show the benefit of training with our pseudo-labels. We also show the benefit of modelling label uncertainty. In the above table,  $D_{\hat{L}seq}$ contains propagated labels and $D_{\hat{L}ps}$ contains pseudo-semantic labels (refer Section~\ref{subsec-alea}).
+    }\label{tab_main_ablation}
+    \begin{tabular}{llccc}
+\toprule
+\multicolumn{2}{c}{Dataset}& Cross Entropy & Aleatoric Uncertainty\cite{gal_main} & Ours: UAT \\
+\midrule
+\multicolumn{2}{l}{$D_L$} & 77.62 & 77.69 & - \\
+\multicolumn{2}{l}{$D_L + D_{\hat{L}seq}$ }& 77.82 & 77.83 & 78.11 \\
+\midrule
+\multicolumn{2}{c}{$D_L + D_{\hat{L}seq} + D_{\hat{L}ps}$} & 78.45  & 78.52 & \textbf{78.58} \\
+\bottomrule
+    \end{tabular}
+\end{table}

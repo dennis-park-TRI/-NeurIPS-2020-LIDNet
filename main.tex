@@ -1,0 +1,191 @@
+\documentclass{article}
+
+% if you need to pass options to natbib, use, e.g.:
+%     \PassOptionsToPackage{numbers, compress}{natbib}
+% before loading neurips_2020
+
+% ready for submission
+% \usepackage{neurips_2020}
+
+% to compile a preprint version, e.g., for submission to arXiv, add add the
+% [preprint] option:
+%     \usepackage[preprint]{neurips_2020}
+
+% to compile a camera-ready version, add the [final] option, e.g.:
+%     \usepackage[final]{neurips_2020}
+
+% to avoid loading the natbib package, add option nonatbib:
+\usepackage[nonatbib]{neurips_2020}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+% Added from ECCV
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{subfigure}
+% \usepackage{subtable}
+\usepackage{amsmath}
+\usepackage{floatrow}
+\usepackage{caption}
+\captionsetup[table]{position=bottom}   %% or below
+\captionsetup[tabular]{position=bottom}   %% or below
+
+\usepackage{bm}% bold math
+\usepackage{amsmath}
+\usepackage{subcaption}
+\usepackage{url}
+\usepackage{color}
+\usepackage{mathrsfs}
+\usepackage{amsthm}
+\newtheorem{theorem}{Theorem}
+\newtheorem*{theorem*}{Theorem}
+
+
+\DeclareMathOperator{\softmax}{Softmax} 
+%\title{Improving Semantic Segmentation through Label Propagation with Cyclic Label Consistency and Uncertainty}
+%\title{Warp-Refine Propagation and Uncertainty-Aware Training for Semantic Segmentation}
+\title{Improving Semantic Segmentation via Cycle-consistent Video Auto-labeling}
+% On cycle consistency and noisy-label learning for semantic segmentation.
+% Utilizing cycle consistency and aleatoric uncertainty for enhancing semantic segmentation.
+% 
+% Enhancing label propagation with cycle consistency, and improving noisy label learning by modelling uncertaint
+
+% The \author macro works with any number of authors. There are two commands
+% used to separate the names and addresses of multiple authors: \And and \AND.
+%
+% Using \And between authors leaves it to LaTeX to determine where to break the
+% lines. Using \AND forces a line break at that point. So, if LaTeX puts 3 of 4
+% authors names on the first line, and the last on the second line, try using
+% \AND instead of \And before the third author name.
+
+\author{%
+  David S.~Hippocampus\thanks{Use footnote for providing further information
+    about author (webpage, alternative address)---\emph{not} for acknowledging
+    funding agencies.} \\
+  Department of Computer Science\\
+  Cranberry-Lemon University\\
+  Pittsburgh, PA 15213 \\
+  \texttt{hippo@cs.cranberry-lemon.edu} \\
+  % examples of more authors
+  % \And
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+  % \AND
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+  % \And
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+  % \And
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+% Aditya
+Not only are Deep Learning models for semantic segmentation notably data-hungry, the dense manual annotation required for the task is also prohibitively costly. Automatically annotating video frames by propagating labels through time is a promising economical approach towards enriching training data and alleviating this data-bottleneck. We propose a novel label propagation method which leverages cycle consistency across time to propagate labels over significantly longer time horizons and with higher accuracy than previously possible. We also observe that dense pixel annotation, be it manual or automated, is a noisy process. To robustly train with labels from multiple noisy labeling processes, we derive a principled approach which aims to capture the label uncertainty. With our approach, we are able to effectively utilize labels from multiple noisy label distributions. We validate our contributions on the Cityscapes and ApolloScape datasets where we achieve \textit{state-of-the-art} results.
+
+% Dennis's pass
+% Deep Learning models for semantic segmentation are notably data-hungry, as manual annotation is labor-intensive. Automatically annotating video frames by propagating labels through time is a promising approach for enriching training data. Leveraging cycle consistency across frames, we propose a novel label propagation method which can propagate labels over significantly longer time horizons and with higher accuracy than previously possible. We also observe that dense pixel annotation, be it manual or propagated, is a noisy process. To robustly train with noisy labels, we derive a principled approach whereby we aim to capture the uncertainty inherent in various label generation processes. The model learns how to effectively combine labels from multiple noisy label distributions with explicit uncertainty modelling. We validate our contributions on the Cityscapes and ApolloScape datasets where we achieve \textit{state-of-the-art} results.
+
+% 
+%%% Rares's pass
+%Deep Learning models for semantic segmentation are notably data-hungry, with labels expensive and difficult to acquire. Automatically labeling data through label propagation is a promising approach for improving the performance of such models. Leveraging cycle consistency, we propose a novel label propagation method which is able to propagate labels over longer time horizons and with significantly less noise than previously possible. Our second insight comes from the fact that labeling, be it manual or propagated, is a noisy process. To account for this, we derive a principled approach whereby we aim to capture the uncertainty inherent in various label generation processes. By explicitly modeling this uncertainty, we learn how to effectively combine labels from multiple noisy label distributions. We validate our contributions on the Cityscapes and ApolloScape datasets where we achieve \textit{state-of-the-art} results.
+
+
+
+%%% OLDER ABSTRACT
+%In the spectrum of semi-supervised methods, label propagation stands out as a very promising candidate for improving semantic segmentation, especially in the domain of autonomous driving, where data is traditionally collected in a temporal sequence. 
+% Deep Learning models for semantic segmentation are notably data-hungry. Automatically labeling additional data through label propagation is a promising approach for improving the performance of such models.
+% In this paper, we address two fundamental aspects of this approach: the quality of propagated labels, and the drawbacks of learning with noisy propagated labels. 
+% First, we propose a new method called Warp-Refine Propagation which, by leveraging the consistency of labels in a cyclic propagation loop, significantly improves the propagated labels.
+% Our method refines labels generated from optical flow-based methods by learning to inpaint and denoise them. With our method, we are able to propagate labels for much longer, and with significantly less noise, generating diverse, and useful training data. 
+% However, the generated labels are inherently noisy, curtailing the performance of deep models trained with them. Hence, we propose a principled approach, namely Uncertainty-Aware-Training for training with noisy labels. The noise in generated labels is handled by modelling label uncertainty from the labelled data itself.
+% As our approach is independent of the label generation process, we can tackle multiple noisy label distributions at the same time.
+% The labels generated from our method, together with the modelling of label uncertainty, allow us to achieve %\textit{state-of-the-art}
+% competitive
+% performance for the Cityscapes and ApolloScape datasets. 
+
+% , especially in the domain of autonomous driving, where data is traditionally collected in a temporal sequence. 
+% Previous \textit{state-of-the-art} approach for label propagation utilizes optical-flow based warping between image frames to propagate labels, yielding noisy propagated labels. In this work, we propose a novel method \textit{LP-MID: Label Propagation with Masking, Inpainting and Denoising} to significantly improve propagated labels. Our method refines labels generated from optical-flow based warping by learning to inpaint and denoise such labels in a supervised manner. At the heart of our approach lies the consistency of labels in a cyclic propagation loop. With our method, we are able to propagate labels for much longer, and with significantly less noise, generating more diverse, and useful data for training. 
+% This is particularly useful in the case of data-scarcity. 
+% Further, by leveraging the epistemic uncertainty of the propagated labels, we propose a selective learning policy, which specifically addresses the drawbacks of models trained without propagation. Using our method we achieve \textit{state-of-the-art} performance on Cityscapes dataset of $100$ mIOU. %, and on Apolloscapes dataset of $100$ mIOU. 
+% Finally, we also show the significant benefits of our approach in the case of data scarcity. Our method  achieves a m$\%$ improvement over supervised training baselines, when only $15$ \% of labelled data is used.
+
+\end{abstract}
+
+
+\section{Introduction}
+\label{section-intro}
+\input{subsections/introduction}
+
+\section{Related Works}
+\label{section-rel}
+\input{subsections/rel_works}
+
+\section{Methodology}
+\label{section-method}
+\input{subsections/method}
+
+\section{Experiments}
+\label{section-exp}
+\input{subsections/experiments}
+
+% \section{Discussion}
+% \label{section-discussion}
+% \input{subsections/discussion}
+
+\section{Conclusion}
+\label{section-conclusion}
+\input{subsections/conclusion}
+
+
+\newpage
+\section*{Potential Broader Impact}
+This research can be beneficial to companies or institutions requiring applications for semantic understanding of video data such as autonomous driving.
+% We should mention that it can make semantic segmentation more accessible for people without resources to annotate large amount of data. 
+% In Drawback I think we should mention that it does take more time to train --> more pollution and environmental cost. 
+% 
+If autonomous driving becomes an ubiquitous reality, humans currently working with manual car driving labor could be at disadvantage from the results of this research, although indirectly.
+If an autonomous driving system fails due to the proposed component, the consequence could be an accident or the loss of human life.
+We believe our proposed method leverages some bias in the data, as the data distribution of the training set will affect the type of representations that can be learned by the downstream semantic segmentation network.
+% Instructions:
+%Ethical aspects. Future societal consequences.
+%Discuss both positive and negative outcomes.
+%Must discuss the below:
+% a) who may benefit from this research
+% b) who may be put at disadvantage from this research
+% c) what are the consequences of failure of the system
+% d) whether the task/method leverages biases in the data.
+
+% \section*{Acknowledgments and Disclosure of Funding}
+
+% ---- Bibliography ----
+%
+% BibTeX users should specify bibliography style 'splncs04'.
+% References will then be sorted and formatted in the correct style.
+%
+% \bibliographystyle{splncs04}
+% \bibliographystyle{splncs03}
+\bibliographystyle{ieee}
+\bibliography{egbib}
+% \bibliography{eccv2020kit/egbib}
+\end{document}
